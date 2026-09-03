@@ -3,60 +3,33 @@
 import type { ReactNode, RefObject } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { InstagramIcon, TikTokIcon, MailIcon, WhatsAppIcon } from '@/components/icons';
+import { LanguageProvider, useI18n, LOCALES, type Locale } from '@/lib/i18n';
 
 const LIME = '#cefd00';
-const WA_INFO =
-  'https://wa.me/593959204331?text=Hola%2C%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20Epik%20Bizz.';
-const waPlan = (name: string) =>
-  `https://wa.me/593959204331?text=${encodeURIComponent('Hola, quiero información sobre el paquete ' + name + '.')}`;
 
-const NAV = [
-  { label: 'Qué hacemos', href: '#que-hacemos' },
-  { label: 'Paquetes', href: '#paquetes' },
-  { label: 'Cómo funciona', href: '#como-funciona' },
-  { label: 'Preguntas', href: '#preguntas' },
-];
+const waLink = (msg: string) => `https://wa.me/593959204331?text=${encodeURIComponent(msg)}`;
 
-const HERO_LINES = [
-  ['Convertimos ideas de negocio en contenido que', 'conecta.'],
-  ['Hagamos visible lo que te hace', 'diferente.'],
-  ['Potenciamos el alcance de todo lo que puedes', 'lograr.'],
-];
+const NAV_HREFS = ['#que-hacemos', '#paquetes', '#como-funciona', '#preguntas'] as const;
 
 /* shared placeholder fills for image slots (Figma nodes 9:x) */
 const FILLS = ['#1e40af', '#047857', '#b45309', '#be123c', '#7c3aed'];
 
-const PLANS = [
-  { name: 'Origin', title: 'Empieza a existir en TikTok', accent: 'existir', desc: 'Hacemos que tu marca esté presente donde tu audiencia ya está mirando.', price: '$300', color: FILLS[0] },
-  { name: 'Scale', title: 'Multiplica tu alcance.', accent: 'Multiplica', desc: 'Donde esté tu audiencia, ahí debe estar tu marca. Expandimos y optimizamos tu presencia en más canales con un solo mensaje coherente.', price: '$360', color: FILLS[1] },
-  { name: 'Elevate', title: 'Amplifica tu alcance', accent: 'tu alcance', desc: 'Gestión completa de principio a fin usando Ads para que tu marca llegue aún más lejos.', price: '$450', color: FILLS[2] },
-  { name: 'Focus', title: 'Dale dirección a tu marca', accent: 'dirección', desc: 'Resuelve dudas, define tu enfoque y fortalece tu identidad en redes sociales con una asesoría enfocada en tus objetivos actuales.', price: '$100', color: FILLS[3] },
-  { name: 'Decode', title: 'BTC para impulsar tu empresa', accent: 'BTC para impulsar', desc: 'Entiende cómo Bitcoin puede transformar tu empresa en pagos, operaciones y generar nuevas oportunidades de negocio.', price: '$500', color: FILLS[4] },
+const PLANS_BASE = [
+  { name: 'Origin', price: '$300', video: '/assets/plan-origin.mp4' },
+  { name: 'Scale', price: '$360', video: '/assets/plan-scale.mp4' },
+  { name: 'Elevate', price: '$450', video: '/assets/plan-elevate.mp4' },
+  { name: 'Focus', price: '$100', video: '/assets/plan-focus.mp4' },
+  { name: 'Decode', price: '$500', video: '/assets/plan-decode.mp4' },
 ];
 
-const PROCESSES = [
-  { num: '01', title: 'Reunión y diagnóstico', desc: 'Nos reunimos para conocer tu marca, entender tus objetivos, audiencia y desafíos, competencia, para entender lo que necesita tu marca.' },
-  { num: '02', title: 'Brief y Preparación', desc: 'Nos compartes la información, materiales, referencias y permisos necesarios de tu marca para tener todo listo antes de comenzar.' },
-  { num: '03', title: 'Planificamos el contenido', desc: 'Organizamos ideas, formatos y mensajes en un plan de contenido alineado con la estrategia y los objetivos de tu marca.' },
-  { num: '04', title: 'Creamos y producimos', desc: 'Ejecutamos la producción y transformamos la estrategia en contenido profesional diseñado para captar atención y generar conexión.' },
-  { num: '05', title: 'Publicamos y amplificamos', desc: 'Optimizamos y distribuimos el contenido en los canales adecuados, poniendo tu marca frente a la audiencia correcta.' },
-  { num: '06', title: 'Medimos y optimizamos', desc: 'Analizamos resultados, detectamos oportunidades y ajustamos la estrategia para mejorar continuamente el impacto de tu marca.' },
-];
+const PROCESSES_BASE = [{ num: '01' }, { num: '02' }, { num: '03' }, { num: '04' }, { num: '05' }, { num: '06' }];
 
-const SERVICES = [
-  { tag: 'Producción audiovisual mensual', title: 'Contenido audiovisual creado a la medida de tu negocio.', desc: 'Sesiones de foto y video profesional, fresco y alineado con tu marca, listo para destacar.', color: FILLS[0] },
-  { tag: 'Asesoría estratégica', title: 'Dirección para tomar mejores decisiones.', desc: 'Revisamos tu presencia digital, detectamos oportunidades y definimos los próximos pasos para hacer crecer tu marca.', color: FILLS[1] },
-  { tag: 'Gestión de contenido', title: 'Tu contenido listo para mostrarse.', desc: 'Planificamos, creamos, organizamos y publicamos todo el contenido para que tus canales digitales estén activos.', color: FILLS[2] },
-  { tag: 'Optimización de perfiles', title: 'Haz que tu marca se vea a la altura de tu negocio.', desc: 'Optimizamos tus perfiles para lograr una imagen coherente, profesional y estratégica en cada plataforma.', color: FILLS[4] },
-  { tag: 'Publicidad paga', title: 'Pon tu marca frente a las personas correctas.', desc: 'Campañas con presupuesto optimizado para aumentar tu visibilidad.', color: FILLS[3] },
-];
-
-const FAQ_ITEMS = [
-  { q: '¿Qué pasa si necesito algo que no está incluido en el paquete?', a: 'Te presentamos el alcance y el costo del servicio adicional antes de realizarlo. Nada se ejecuta ni se cobra sin tu aprobación previa.' },
-  { q: '¿Cómo funciona la permanencia y la cancelación?', a: 'Nuestros paquetes tienen un compromiso mínimo de 3 meses de permanencia establecido mediante contrato. Si decides finalizar el servicio antes de cumplir este período, se aplicará un cargo por cancelación del saldo pendiente del contrato.' },
-  { q: '¿Esto es para cualquier tipo de empresa?', a: 'Trabajamos con marcas que buscan construir una presencia digital sólida y profesional. Antes de comenzar analizamos tu negocio, objetivos y audiencia para determinar que es lo que mejor se adapta para tus objetivos.' },
-  { q: '¿Ustedes se encargan de todo el proceso?', a: 'Absolutamente, desde la estrategia y planificación hasta la producción, publicación, publicidad y optimización. Tú nos das la información y el feedback necesario; nosotros nos encargamos de convertirlo en una presencia digital completa.' },
-  { q: '¿Cómo hacen para que el contenido represente realmente a mi marca?', a: 'Antes de empezar a crear, conocemos tu empresa a fondo: tu propuesta, personalidad, objetivos, audiencia y competencia. Así construimos una comunicación coherente con quién eres y con lo que quieres transmitir.' },
+const SERVICES_BASE = [
+  { image: '/assets/service-1.jpg' },
+  { image: '/assets/service-2.jpg' },
+  { image: '/assets/service-3.jpg' },
+  { image: '/assets/service-4.jpg' },
+  { image: '/assets/service-5.jpg' },
 ];
 
 /* ---------- reveal-on-scroll ---------- */
@@ -195,11 +168,71 @@ function PillLink({
   );
 }
 
+/* ---------- language switcher ---------- */
+
+function LanguageSwitcher() {
+  const { locale, setLocale, t } = useI18n();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onClick);
+    return () => document.removeEventListener('mousedown', onClick);
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-label={t.chooseLanguage}
+        aria-expanded={open}
+        className="press flex h-11 w-11 items-center justify-center rounded-full text-ink transition-colors duration-150 [@media(hover:hover)]:hover:bg-black/5"
+      >
+        <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
+          <path d="M3 12h18" stroke="currentColor" strokeWidth="1.6" />
+          <path d="M12 3c2.5 2.7 3.8 6 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-6-3.8-9s1.3-6.3 3.8-9Z" stroke="currentColor" strokeWidth="1.6" />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full z-50 mt-2 max-h-80 w-44 overflow-y-auto rounded-2xl border border-hairline bg-white p-1.5 shadow-lg">
+          {LOCALES.map((l) => (
+            <button
+              key={l.code}
+              type="button"
+              onClick={() => {
+                setLocale(l.code);
+                setOpen(false);
+              }}
+              className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm transition-colors duration-150 [@media(hover:hover)]:hover:bg-black/5 ${
+                l.code === locale ? 'font-bold text-ink' : 'text-ink/70'
+              }`}
+            >
+              {l.nativeLabel}
+              {l.code === locale && <span style={{ color: LIME }}>●</span>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ---------- header + mobile menu ---------- */
 
 function Header() {
   const [open, setOpen] = useState(false);
   const reduce = useReducedMotion();
+  const { t } = useI18n();
+  const nav = NAV_HREFS.map((href, i) => ({
+    href,
+    label: [t.nav.queHacemos, t.nav.paquetes, t.nav.comoFunciona, t.nav.preguntas][i],
+  }));
 
   useEffect(() => {
     if (!open) return;
@@ -221,7 +254,7 @@ function Header() {
         </a>
 
         <nav className="hidden gap-8 md:flex">
-          {NAV.map((item) => (
+          {nav.map((item) => (
             <a
               key={item.href}
               href={item.href}
@@ -233,14 +266,15 @@ function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <LanguageSwitcher />
           <div className="hidden sm:block">
-            <PillLink href={WA_INFO} variant="solid">
-              Hablemos
+            <PillLink href={waLink(t.wa.info)} variant="solid">
+              {t.hablemos}
             </PillLink>
           </div>
           <button
             type="button"
-            aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
+            aria-label={open ? t.closeMenu : t.openMenu}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
             className="press flex h-11 w-11 items-center justify-center rounded-full text-ink md:hidden"
@@ -273,7 +307,7 @@ function Header() {
             transition: reduce ? 'none' : 'transform 220ms var(--ease-out)',
           }}
         >
-          {NAV.map((item, i) => (
+          {nav.map((item, i) => (
             <a
               key={item.href}
               href={item.href}
@@ -295,11 +329,11 @@ function Header() {
               opacity: open ? 1 : 0,
               transform: open ? 'none' : 'translateY(6px)',
               transition: reduce ? 'none' : 'opacity 200ms var(--ease-out), transform 200ms var(--ease-out)',
-              transitionDelay: open && !reduce ? `${NAV.length * 40}ms` : '0ms',
+              transitionDelay: open && !reduce ? `${nav.length * 40}ms` : '0ms',
             }}
           >
-            <PillLink href={WA_INFO} variant="solid" onClick={() => setOpen(false)}>
-              Hablemos
+            <PillLink href={waLink(t.wa.info)} variant="solid" onClick={() => setOpen(false)}>
+              {t.hablemos}
             </PillLink>
           </div>
         </nav>
@@ -313,6 +347,8 @@ function Header() {
 function HeroBento() {
   const bentoRef = useRef<HTMLDivElement>(null);
   useRevealChildren(bentoRef);
+  const { t } = useI18n();
+  const waInfo = waLink(t.wa.info);
   return (
     <div
       ref={bentoRef}
@@ -331,8 +367,18 @@ function HeroBento() {
       <div
         data-reveal
         style={{ '--reveal-delay': '0ms' } as React.CSSProperties}
-        className="relative min-h-[140px] rounded-[20px] bg-ink md:min-h-0 md:w-[38%] md:[height:clamp(240px,32vh,360px)]"
-      />
+        className="relative min-h-[140px] overflow-hidden rounded-[20px] bg-ink md:min-h-0 md:w-[38%]"
+      >
+        <video
+          src="/assets/hero-bento-video.mp4"
+          className="h-full w-full object-cover"
+          style={{ aspectRatio: '16 / 9' }}
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+      </div>
 
       <div className="flex flex-1 flex-col gap-3 md:gap-4">
         <div
@@ -340,25 +386,32 @@ function HeroBento() {
           style={{ '--reveal-delay': '80ms' } as React.CSSProperties}
           className="relative min-h-[110px] flex-1 md:min-h-[150px]"
         >
-          <div className="absolute inset-0 rounded-[24px] bg-ink" />
+          <div className="absolute inset-0 overflow-hidden rounded-[24px] bg-ink">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/assets/hero-bento-cta.jpg"
+              alt=""
+              className="h-full w-full object-cover"
+            />
+          </div>
           <div className="group/cta absolute right-4 top-4 h-[48px] w-[188px]">
             <div className="absolute inset-0" style={{ filter: 'url(#ctaGoo)' }}>
               <div className="absolute left-0 top-0 h-[48px] w-[146px] rounded-full bg-white transition-colors duration-200 group-hover/cta:bg-lime [@media(hover:hover)]:group-hover/cta:animate-[liquid-press_320ms_var(--ease-out)] group-active/cta:animate-[liquid-press_320ms_var(--ease-out)]" />
               <div className="absolute right-0 top-0 h-[48px] w-[48px] rounded-full bg-white transition-colors duration-200 group-hover/cta:bg-lime [@media(hover:hover)]:group-hover/cta:animate-[liquid-press_320ms_var(--ease-out)] group-active/cta:animate-[liquid-press_320ms_var(--ease-out)]" />
             </div>
             <a
-              href={WA_INFO}
+              href={waInfo}
               target="_blank"
               rel="noopener noreferrer"
               className="absolute left-0 top-0 flex h-[48px] w-[146px] items-center justify-center text-sm font-bold text-ink"
             >
-              Hablemos
+              {t.hablemos}
             </a>
             <a
-              href={WA_INFO}
+              href={waInfo}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Hablemos por WhatsApp"
+              aria-label={t.waAria}
               className="absolute right-0 top-0 flex h-[48px] w-[48px] items-center justify-center text-base text-ink"
             >
               ✉
@@ -367,13 +420,22 @@ function HeroBento() {
         </div>
 
         <div className="grid grid-cols-3 gap-3 md:gap-4">
-          {[140, 190, 240].map((d) => (
+          {[
+            { delay: 140, src: '/assets/hero-bento-photo-2.jpg' },
+            { delay: 190, src: '/assets/hero-bento-photo.jpg' },
+            { delay: 240, src: '/assets/hero-bento-photo-3.jpg' },
+          ].map(({ delay, src }) => (
             <div
-              key={d}
+              key={delay}
               data-reveal
-              style={{ '--reveal-delay': `${d}ms` } as React.CSSProperties}
-              className="min-h-[54px] rounded-[16px] bg-ink md:min-h-[110px] md:rounded-[20px]"
-            />
+              style={{ '--reveal-delay': `${delay}ms` } as React.CSSProperties}
+              className="min-h-[54px] overflow-hidden rounded-[16px] bg-ink md:min-h-[110px] md:rounded-[20px]"
+            >
+              {src && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={src} alt="" className="h-full w-full object-cover" />
+              )}
+            </div>
           ))}
         </div>
       </div>
@@ -382,9 +444,11 @@ function HeroBento() {
 }
 
 function HeroSection() {
+  const { t } = useI18n();
   const [heroIdx, setHeroIdx] = useState(0);
   const [heroOpacity, setHeroOpacity] = useState(1);
   const reduce = useReducedMotion();
+  const lineCount = t.hero.lines.length;
 
   useEffect(() => {
     if (reduce) return;
@@ -392,7 +456,7 @@ function HeroSection() {
     const timer = window.setInterval(() => {
       setHeroOpacity(0);
       swap = window.setTimeout(() => {
-        setHeroIdx((i) => (i + 1) % HERO_LINES.length);
+        setHeroIdx((i) => (i + 1) % lineCount);
         setHeroOpacity(1);
       }, 300);
     }, 4600);
@@ -400,9 +464,9 @@ function HeroSection() {
       window.clearInterval(timer);
       window.clearTimeout(swap);
     };
-  }, [reduce]);
+  }, [reduce, lineCount]);
 
-  const [lead, accent] = HERO_LINES[heroIdx];
+  const [lead, accent] = t.hero.lines[heroIdx % t.hero.lines.length];
   return (
     <section
       id="top"
@@ -427,8 +491,8 @@ function HeroSection() {
         </h1>
         <HeroBento />
         <p className="mx-auto mt-6 max-w-3xl text-muted" style={{ fontSize: 'var(--text-body)' }}>
-          Damos forma a tus ideas con diseño, contenido, estrategia y tecnología para llevar la esencia
-          <br className="hidden sm:inline" /> de tu marca al mundo digital y hacer que destaque.
+          {t.hero.body1}
+          <br className="hidden sm:inline" /> {t.hero.body2}
         </p>
       </Container>
     </section>
@@ -438,8 +502,28 @@ function HeroSection() {
 /* ---------- services ---------- */
 
 function ServicesSection() {
+  const { t } = useI18n();
+  const SERVICES = SERVICES_BASE.map((s, i) => ({ ...s, ...t.services.items[i] }));
   const [active, setActive] = useState(0);
   const svc = SERVICES[active];
+  const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const rowRef = useRef<HTMLDivElement>(null);
+
+  const goTo = (i: number) => {
+    const idx = (i + SERVICES.length) % SERVICES.length;
+    setActive(idx);
+    btnRefs.current[idx]?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  };
+
+  const step = (dir: 1 | -1) => {
+    const idx = (active + dir + SERVICES.length) % SERVICES.length;
+    setActive(idx);
+    const row = rowRef.current;
+    const card = btnRefs.current[idx] ?? btnRefs.current.find(Boolean);
+    if (!row || !card) return;
+    const gap = parseFloat(getComputedStyle(row).columnGap || '0') || 0;
+    row.scrollBy({ left: dir * (card.offsetWidth + gap), behavior: 'smooth' });
+  };
 
   return (
     <section id="que-hacemos" className="relative py-20">
@@ -449,43 +533,90 @@ function ServicesSection() {
             className="font-bold uppercase tracking-tight text-ink"
             style={{ fontSize: 'var(--text-h2)' }}
           >
-            Tu equipo tiene una empresa que dirigir.
+            {t.services.heading1}
             <span className="mt-2 block text-lime leading-[0.95]" style={{ fontSize: 'var(--text-display-sm)' }}>
-              Nosotros la hacemos destacar.
+              {t.services.heading2}
             </span>
           </h2>
           <p className="mt-4 text-muted" style={{ fontSize: 'var(--text-body)' }}>
-            Epik Bizz gestiona tu presencia digital, desde las ideas a la publicación.
-            <strong className="block font-bold text-ink">Y logramos que se vea así.</strong>
+            {t.services.body1}
+            <strong className="block font-bold text-ink">{t.services.body2}</strong>
           </p>
         </Reveal>
 
-        <Reveal delay={80} className="overflow-hidden rounded-[28px]">
-          <div className="w-full overflow-hidden rounded-[28px]" style={{ aspectRatio: '16 / 9' }}>
-            <div
+        <Reveal delay={80}>
+          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[28px] md:aspect-[16/9]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               key={active}
-              aria-label={svc.title}
-              className="h-full w-full"
-              style={{ background: svc.color, animation: 'swap-in 420ms var(--ease-out)' }}
+              src={svc.image}
+              alt={svc.title}
+              className="h-full w-full object-cover"
+              style={{ animation: 'swap-in 420ms var(--ease-out)' }}
             />
+            <div aria-hidden className="absolute inset-0 bg-black/50 md:hidden" />
+            <div
+              key={`copy-${active}`}
+              className="absolute inset-0 flex flex-col justify-end gap-1.5 bg-gradient-to-t from-black/70 via-black/10 to-transparent p-5 sm:p-8"
+              style={{ animation: 'swap-in 420ms var(--ease-out)' }}
+            >
+              <span className="text-xs font-bold uppercase tracking-wide text-white sm:text-sm">
+                {svc.tag}
+              </span>
+              <p className="max-w-lg text-lg font-bold text-lime sm:text-2xl">{svc.title}</p>
+              <p className="max-w-lg text-sm text-white/85 sm:text-base">{svc.desc}</p>
+            </div>
           </div>
-          <div className="mt-3 flex justify-start gap-2.5 overflow-x-auto px-1 py-2 [scrollbar-width:none] sm:gap-3 md:mt-4 md:overflow-visible">
-            {SERVICES.map((s, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setActive(i)}
-                aria-current={i === active}
-                className={`press group relative h-16 w-28 flex-shrink-0 snap-start overflow-hidden rounded-xl text-left transition-[opacity,box-shadow] duration-200 sm:h-20 sm:w-32 md:h-24 md:w-auto md:min-w-0 md:flex-1 ${
-                  i === active ? 'opacity-100 ring-2 ring-ink ring-offset-2' : 'opacity-55 [@media(hover:hover)]:hover:opacity-100'
-                }`}
-                style={{ background: s.color }}
-              >
-                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-2 text-[10px] font-bold uppercase leading-tight text-white">
-                  {s.tag}
-                </span>
-              </button>
-            ))}
+          <div className="mt-3 flex items-center gap-2 md:mt-4">
+            <button
+              type="button"
+              onClick={() => step(-1)}
+              aria-label={t.services.prevAria}
+              className="press flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-ink/15 text-ink transition-colors duration-150 [@media(hover:hover)]:hover:bg-ink [@media(hover:hover)]:hover:text-white md:h-10 md:w-10"
+            >
+              <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 md:h-5 md:w-5">
+                <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+
+            <div className="relative min-w-0 flex-1">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-white to-transparent"
+              />
+              <div ref={rowRef} className="flex justify-end gap-2.5 overflow-x-auto px-1 py-2 [scrollbar-width:none] sm:gap-3">
+                {SERVICES.map((s, i) => (
+                  <button
+                    key={i}
+                    ref={(el) => {
+                      btnRefs.current[i] = el;
+                    }}
+                    type="button"
+                    onClick={() => goTo(i)}
+                    aria-current={i === active}
+                    className={`press group relative h-16 w-28 flex-shrink-0 snap-start overflow-hidden rounded-xl bg-cover bg-center text-left transition-[opacity,box-shadow] duration-200 sm:h-20 sm:w-32 md:h-24 md:w-40 ${
+                      i === active ? 'opacity-100 ring-2 ring-ink ring-offset-2' : 'opacity-55 [@media(hover:hover)]:hover:opacity-100'
+                    }`}
+                    style={{ backgroundImage: `url(${s.image})` }}
+                  >
+                    <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-2 text-[10px] font-bold uppercase leading-tight text-white">
+                      {s.tag}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => step(1)}
+              aria-label={t.services.nextAria}
+              className="press flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-ink/15 text-ink transition-colors duration-150 [@media(hover:hover)]:hover:bg-ink [@media(hover:hover)]:hover:text-white md:h-10 md:w-10"
+            >
+              <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 md:h-5 md:w-5">
+                <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
           </div>
         </Reveal>
       </Container>
@@ -507,17 +638,21 @@ function useIsMobile(bp = 768) {
   return mobile;
 }
 
+type Plan = (typeof PLANS_BASE)[number] & { title: string; accent?: string; desc: string };
+
 function PlansTicketMobile({
   plan,
   activePlan,
   goToPlan,
   fade,
 }: {
-  plan: (typeof PLANS)[number];
+  plan: Plan;
   activePlan: number;
   goToPlan: (i: number) => void;
   fade: { opacity: number; transition: string };
 }) {
+  const { t } = useI18n();
+  const waPlan = (name: string) => waLink(t.wa.plan.replace('{name}', name));
   return (
     <div
       className="relative mx-auto flex w-full max-w-[380px] flex-col text-white"
@@ -528,21 +663,25 @@ function PlansTicketMobile({
         style={{ borderRadius: '7cqw', padding: '5cqw', gap: '4.5cqw' }}
       >
         <div className="relative">
-          <div
+          <video
             key={activePlan}
-            className="w-full"
+            src={plan.video}
+            className="w-full object-cover"
             style={{
               aspectRatio: '3 / 4',
               borderRadius: '5.5cqw',
-              background: plan.color,
               animation: 'swap-in 380ms var(--ease-out)',
             }}
+            autoPlay
+            loop
+            muted
+            playsInline
           />
           <a
             href={waPlan(plan.name)}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Hablemos por WhatsApp"
+            aria-label={t.waAria}
             className="absolute z-10"
             style={{ right: '0cqw', bottom: '6cqw', width: '36cqw', height: '23cqw' }}
           >
@@ -578,7 +717,7 @@ function PlansTicketMobile({
           className="press flex items-center justify-center gap-[2cqw] rounded-full bg-lime font-bold text-ink transition-[filter] duration-150 [@media(hover:hover)]:hover:brightness-95"
           style={{ padding: '3cqw 6cqw', fontSize: '4.4cqw' }}
         >
-          Hablemos
+          {t.hablemos}
           <svg viewBox="0 0 24 24" fill="none" style={{ width: '5cqw', height: '5cqw' }}>
             <path d="M7 17 17 7M17 7H8M17 7v9" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -586,7 +725,7 @@ function PlansTicketMobile({
       </div>
 
       <ul className="m-0 flex list-none flex-wrap justify-center p-0" style={{ fontSize: '4.4cqw', gap: '4cqw', columnGap: '5cqw' }}>
-        {PLANS.map((p, i) => (
+        {PLANS_BASE.map((p, i) => (
           <li key={p.name} style={{ color: i === activePlan ? LIME : 'rgba(11,11,11,0.4)' }}>
             <button
               type="button"
@@ -603,6 +742,9 @@ function PlansTicketMobile({
 }
 
 function PlansSection() {
+  const { t } = useI18n();
+  const PLANS = PLANS_BASE.map((p, i) => ({ ...p, ...t.plans.items[i] }));
+  const waPlan = (name: string) => waLink(t.wa.plan.replace('{name}', name));
   const isMobile = useIsMobile();
   const [activePlan, setActivePlan] = useState(0);
   const [fading, setFading] = useState(false);
@@ -671,13 +813,13 @@ function PlansSection() {
     <section ref={sectionRef} id="paquetes" className="mx-auto max-w-[1180px] px-4 pt-20 pb-[51px] sm:px-5 lg:px-8">
       <Reveal>
         <h2 className="font-bold uppercase tracking-tight text-ink" style={{ fontSize: 'var(--text-h2)' }}>
-          Explora nuestros paquetes y elige cómo quieres hacer crecer
+          {t.plans.heading1}
           <span className="mt-2 block text-lime leading-[0.95]" style={{ fontSize: 'var(--text-display)' }}>
-            tu marca.
+            {t.plans.heading2}
           </span>
         </h2>
         <p className="mt-3 max-w-md text-muted" style={{ fontSize: 'var(--text-body)' }}>
-          Diferentes caminos, un mismo objetivo: hacer que tu marca destaque.
+          {t.plans.body}
         </p>
       </Reveal>
 
@@ -699,18 +841,26 @@ function PlansSection() {
               </div>
 
               <div
-                key={activePlan}
-                className="absolute"
+                className="absolute overflow-hidden"
                 style={{
                   top: '13.45cqw',
                   left: '3.19cqw',
                   right: '35.19cqw',
                   bottom: '3.36cqw',
                   borderRadius: '1.9cqw',
-                  background: plan.color,
-                  animation: 'swap-in 380ms var(--ease-out)',
                 }}
-              />
+              >
+                <video
+                  key={activePlan}
+                  src={plan.video}
+                  className="h-full w-full object-cover"
+                  style={{ animation: 'swap-in 380ms var(--ease-out)' }}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                />
+              </div>
 
               <ul className="absolute m-0 list-none p-0" style={{ left: '67.39cqw', top: '23.21cqw', width: '9.33cqw' }}>
                 {PLANS.map((p, i) => (
@@ -746,7 +896,7 @@ function PlansSection() {
                     className="press absolute left-1/2 top-1/2 flex items-center justify-center gap-[0.6cqw] rounded-full bg-lime font-bold text-ink transition-[filter] duration-150 [@media(hover:hover)]:hover:brightness-95"
                     style={{ width: '15cqw', height: '3.8cqw', fontSize: '1.65cqw', transform: 'translate(-50%,-50%) rotate(-90deg)' }}
                   >
-                    Hablemos
+                    {t.hablemos}
                     <svg viewBox="0 0 24 24" fill="none" style={{ width: '1.9cqw', height: '1.9cqw' }}>
                       <path d="M7 17 17 7M17 7H8M17 7v9" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -767,7 +917,7 @@ function PlansSection() {
                 href={waPlan(plan.name)}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Hablemos por WhatsApp"
+                aria-label={t.waAria}
                 className="hover-tilt absolute z-10"
                 style={{ left: '69.46cqw', top: '3.88cqw', width: '17.34cqw', aspectRatio: '279 / 294' }}
               >
@@ -784,6 +934,8 @@ function PlansSection() {
 /* ---------- process ---------- */
 
 function ProcessSection() {
+  const { t } = useI18n();
+  const PROCESSES = PROCESSES_BASE.map((p, i) => ({ ...p, ...t.process.items[i] }));
   const [activeStep, setActiveStep] = useState(0);
   const gridRef = useRef<HTMLOListElement>(null);
   useRevealChildren(gridRef);
@@ -805,9 +957,9 @@ function ProcessSection() {
       <Container>
         <Reveal className="mb-14 text-center">
           <h2 className="font-bold uppercase tracking-tight text-ink" style={{ fontSize: 'var(--text-h2)' }}>
-            Un proceso simple
+            {t.process.heading1}
             <span className="mt-2 block text-lime leading-[0.95]" style={{ fontSize: 'var(--text-display)' }}>
-              de principio a fin
+              {t.process.heading2}
             </span>
           </h2>
         </Reveal>
@@ -875,6 +1027,7 @@ function ProcessSection() {
 /* ---------- faq ---------- */
 
 function FaqSection() {
+  const { t } = useI18n();
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
   useRevealChildren(listRef);
@@ -886,19 +1039,18 @@ function FaqSection() {
           <div className="mb-8 grid gap-8 md:mb-12 md:grid-cols-3">
             <Reveal>
               <h2 className="mb-4 font-bold tracking-tight text-ink" style={{ fontSize: 'var(--text-h2)' }}>
-                Preguntas frecuentes
+                {t.faq.heading}
               </h2>
               <p className="mb-6 text-muted" style={{ fontSize: 'var(--text-body)' }}>
-                Lo que más nos preguntan antes de empezar: alcance, permanencia, para quién trabajamos y
-                cómo logramos que el contenido represente de verdad a tu marca.
+                {t.faq.body}
               </p>
-              <PillLink href="https://wa.me/593959204331?text=Hola%2C%20tengo%20una%20pregunta%20sobre%20Epik%20Bizz." variant="outline">
-                Hablemos
+              <PillLink href={waLink(t.wa.faq)} variant="outline">
+                {t.hablemos}
               </PillLink>
             </Reveal>
 
             <div ref={listRef} className="border-t border-t-ink md:col-span-2">
-              {FAQ_ITEMS.map((item, i) => {
+              {t.faq.items.map((item, i) => {
                 const open = openIdx === i;
                 return (
                   <div
@@ -949,6 +1101,11 @@ function FaqSection() {
 /* ---------- footer ---------- */
 
 function Footer() {
+  const { t } = useI18n();
+  const nav = NAV_HREFS.map((href, i) => ({
+    href,
+    label: [t.nav.queHacemos, t.nav.paquetes, t.nav.comoFunciona, t.nav.preguntas][i],
+  }));
   return (
     <footer className="mx-4 rounded-t-3xl bg-lime px-6 pb-6 pt-12 text-ink sm:px-10 md:px-16 md:pt-16">
       <Container>
@@ -957,7 +1114,7 @@ function Footer() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.svg" alt="Epik Bizz" className="mb-3 h-9 w-auto" />
             <p className="mb-4" style={{ fontSize: 'var(--text-caption)' }}>
-              Producción, estrategia y tecnología para la presencia digital de tu empresa.
+              {t.footer.tagline}
             </p>
             <div className="flex gap-2">
               {[InstagramIcon, TikTokIcon, MailIcon, WhatsAppIcon].map((Icon, i) => (
@@ -972,7 +1129,7 @@ function Footer() {
             </div>
           </div>
           <div className="flex flex-col gap-4" style={{ fontSize: 'var(--text-caption)' }}>
-            {NAV.map((item) => (
+            {nav.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
@@ -987,7 +1144,7 @@ function Footer() {
           className="border-t border-t-ink/15 pt-6 opacity-55"
           style={{ fontSize: 'var(--text-caption)' }}
         >
-          © 2026 Epik Bizz. Todos los derechos reservados.
+          {t.footer.rights}
         </div>
       </Container>
     </footer>
@@ -996,7 +1153,7 @@ function Footer() {
 
 export default function Home() {
   return (
-    <>
+    <LanguageProvider>
       <Header />
       <main className="overflow-x-clip">
         <HeroSection />
@@ -1006,6 +1163,6 @@ export default function Home() {
         <FaqSection />
       </main>
       <Footer />
-    </>
+    </LanguageProvider>
   );
 }
