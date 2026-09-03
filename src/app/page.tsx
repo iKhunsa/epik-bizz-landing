@@ -273,17 +273,31 @@ function Header() {
             transition: reduce ? 'none' : 'transform 220ms var(--ease-out)',
           }}
         >
-          {NAV.map((item) => (
+          {NAV.map((item, i) => (
             <a
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
               className="press rounded-2xl px-3 py-3 text-xl font-bold uppercase tracking-tight text-ink"
+              style={{
+                opacity: open ? 1 : 0,
+                transform: open ? 'none' : 'translateY(6px)',
+                transition: reduce ? 'none' : 'opacity 200ms var(--ease-out), transform 200ms var(--ease-out)',
+                transitionDelay: open && !reduce ? `${i * 40}ms` : '0ms',
+              }}
             >
               {item.label}
             </a>
           ))}
-          <div className="mt-3 px-1">
+          <div
+            className="mt-3 px-1"
+            style={{
+              opacity: open ? 1 : 0,
+              transform: open ? 'none' : 'translateY(6px)',
+              transition: reduce ? 'none' : 'opacity 200ms var(--ease-out), transform 200ms var(--ease-out)',
+              transitionDelay: open && !reduce ? `${NAV.length * 40}ms` : '0ms',
+            }}
+          >
             <PillLink href={WA_INFO} variant="solid" onClick={() => setOpen(false)}>
               Hablemos
             </PillLink>
@@ -297,8 +311,13 @@ function Header() {
 /* ---------- hero ---------- */
 
 function HeroBento() {
+  const bentoRef = useRef<HTMLDivElement>(null);
+  useRevealChildren(bentoRef);
   return (
-    <Reveal className="relative mx-auto mt-6 flex w-full max-w-[1000px] flex-col gap-4 text-left md:mt-8 md:flex-row">
+    <div
+      ref={bentoRef}
+      className="relative mx-auto mt-6 flex w-full max-w-[1000px] flex-col gap-4 text-left md:mt-8 md:flex-row"
+    >
       {/* decorative gradient anchored to the bento */}
       <div
         aria-hidden
@@ -316,10 +335,18 @@ function HeroBento() {
         </defs>
       </svg>
 
-      <div className="relative min-h-[140px] rounded-[20px] bg-ink md:min-h-0 md:w-[38%] md:[height:clamp(240px,32vh,360px)]" />
+      <div
+        data-reveal
+        style={{ '--reveal-delay': '0ms' } as React.CSSProperties}
+        className="relative min-h-[140px] rounded-[20px] bg-ink md:min-h-0 md:w-[38%] md:[height:clamp(240px,32vh,360px)]"
+      />
 
       <div className="flex flex-1 flex-col gap-3 md:gap-4">
-        <div className="relative min-h-[110px] flex-1 md:min-h-[150px]">
+        <div
+          data-reveal
+          style={{ '--reveal-delay': '80ms' } as React.CSSProperties}
+          className="relative min-h-[110px] flex-1 md:min-h-[150px]"
+        >
           <div className="absolute inset-0 rounded-[24px] bg-ink" />
           <div className="group/cta absolute right-4 top-4 h-[48px] w-[188px]">
             <div className="absolute inset-0" style={{ filter: 'url(#ctaGoo)' }}>
@@ -347,12 +374,17 @@ function HeroBento() {
         </div>
 
         <div className="grid grid-cols-3 gap-3 md:gap-4">
-          <div className="min-h-[54px] rounded-[16px] bg-ink md:min-h-[110px] md:rounded-[20px]" />
-          <div className="min-h-[54px] rounded-[16px] bg-ink md:min-h-[110px] md:rounded-[20px]" />
-          <div className="min-h-[54px] rounded-[16px] bg-ink md:min-h-[110px] md:rounded-[20px]" />
+          {[140, 190, 240].map((d) => (
+            <div
+              key={d}
+              data-reveal
+              style={{ '--reveal-delay': `${d}ms` } as React.CSSProperties}
+              className="min-h-[54px] rounded-[16px] bg-ink md:min-h-[110px] md:rounded-[20px]"
+            />
+          ))}
         </div>
       </div>
-    </Reveal>
+    </div>
   );
 }
 
@@ -444,15 +476,14 @@ function ServicesSection() {
         </Reveal>
 
         <Reveal delay={80} className="overflow-hidden rounded-[28px]">
-          <div
-            aria-label={svc.title}
-            className="w-full rounded-[28px]"
-            style={{
-              aspectRatio: '16 / 9',
-              background: svc.color,
-              transition: 'background-color 400ms var(--ease-out)',
-            }}
-          />
+          <div className="w-full overflow-hidden rounded-[28px]" style={{ aspectRatio: '16 / 9' }}>
+            <div
+              key={active}
+              aria-label={svc.title}
+              className="h-full w-full"
+              style={{ background: svc.color, animation: 'swap-in 420ms var(--ease-out)' }}
+            />
+          </div>
           <div className="mt-3 flex justify-start gap-2.5 overflow-x-auto px-1 py-2 [scrollbar-width:none] sm:gap-3 md:mt-4 md:overflow-visible">
             {SERVICES.map((s, i) => (
               <button
@@ -460,7 +491,7 @@ function ServicesSection() {
                 type="button"
                 onClick={() => setActive(i)}
                 aria-current={i === active}
-                className={`press group relative h-16 w-28 flex-shrink-0 snap-start overflow-hidden rounded-xl text-left transition-opacity duration-150 sm:h-20 sm:w-32 md:h-24 md:w-auto md:min-w-0 md:flex-1 ${
+                className={`press group relative h-16 w-28 flex-shrink-0 snap-start overflow-hidden rounded-xl text-left transition-[opacity,box-shadow] duration-200 sm:h-20 sm:w-32 md:h-24 md:w-auto md:min-w-0 md:flex-1 ${
                   i === active ? 'opacity-100 ring-2 ring-ink ring-offset-2' : 'opacity-55 [@media(hover:hover)]:hover:opacity-100'
                 }`}
                 style={{ background: s.color }}
@@ -513,12 +544,13 @@ function PlansTicketMobile({
       >
         <div className="relative">
           <div
+            key={activePlan}
             className="w-full"
             style={{
               aspectRatio: '3 / 4',
               borderRadius: '5.5cqw',
               background: plan.color,
-              transition: 'background-color 300ms var(--ease-out)',
+              animation: 'swap-in 380ms var(--ease-out)',
             }}
           />
           <a
@@ -658,6 +690,7 @@ function PlansSection() {
               </div>
 
               <div
+                key={activePlan}
                 className="absolute"
                 style={{
                   top: '13.45cqw',
@@ -666,7 +699,7 @@ function PlansSection() {
                   bottom: '3.36cqw',
                   borderRadius: '1.9cqw',
                   background: plan.color,
-                  transition: 'background-color 300ms var(--ease-out)',
+                  animation: 'swap-in 380ms var(--ease-out)',
                 }}
               />
 
@@ -775,10 +808,15 @@ function ProcessSection() {
           ref={gridRef}
           className="relative grid list-none grid-cols-1 gap-10 p-0 sm:grid-cols-3 sm:gap-6 lg:grid-cols-6 lg:gap-4"
         >
-          {/* mobile: vertical connector behind the centered badges */}
+          {/* mobile: vertical connector + scroll-driven fill behind the centered badges */}
           <div
             aria-hidden
             className="absolute left-1/2 top-6 bottom-6 z-0 w-0.5 -translate-x-1/2 bg-track sm:hidden"
+          />
+          <div
+            aria-hidden
+            className="absolute left-1/2 top-6 bottom-6 z-0 w-0.5 origin-top -translate-x-1/2 bg-lime sm:hidden"
+            style={{ transform: `translateX(-50%) scaleY(${fillRatio})`, transition: 'transform 400ms var(--ease-out)' }}
           />
           <div aria-hidden className="absolute left-[8.33%] right-[8.33%] top-[37px] z-0 hidden h-1 bg-track lg:block" />
           <div

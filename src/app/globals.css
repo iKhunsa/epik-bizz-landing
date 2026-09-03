@@ -88,6 +88,12 @@ body {
   transform: none;
 }
 
+/* image / panel swap — keyed remount plays this once */
+@keyframes swap-in {
+  from { opacity: 0; transform: scale(1.03); }
+  to { opacity: 1; transform: none; }
+}
+
 /* liquid press for the gooey CTA */
 @keyframes liquid-press {
   0% { transform: scale(1); border-radius: 999px; }
