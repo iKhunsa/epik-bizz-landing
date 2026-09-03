@@ -318,13 +318,6 @@ function HeroBento() {
       ref={bentoRef}
       className="relative mx-auto mt-6 flex w-full max-w-[1000px] flex-col gap-4 text-left md:mt-8 md:flex-row"
     >
-      {/* decorative gradient anchored to the bento */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-[30%] -top-6 bottom-[-4%] -z-10 w-[45%] sm:w-[42%] md:w-[40%]"
-        style={{ background: `linear-gradient(to bottom, ${LIME} 0%, ${LIME} 30%, rgba(206,253,0,0) 100%)` }}
-      />
-
       <svg width="0" height="0" aria-hidden className="absolute">
         <defs>
           <filter id="ctaGoo">
@@ -450,14 +443,6 @@ function ServicesSection() {
 
   return (
     <section id="que-hacemos" className="relative py-20">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-0 top-[62%] -z-10 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[110px] md:h-[880px] md:w-[880px]"
-        style={{
-          background:
-            'radial-gradient(circle at 45% 45%, rgba(206,253,0,0.85), rgba(150,235,140,0.45) 42%, rgba(124,58,237,0.2) 68%, rgba(255,255,255,0) 80%)',
-        }}
-      />
       <Container>
         <Reveal className="mb-10 text-left md:text-right">
           <h2
