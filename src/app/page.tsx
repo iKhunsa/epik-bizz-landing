@@ -352,9 +352,18 @@ function PlansTicketMobile({
               'repeating-linear-gradient(90deg,#fff 0 1cqw,#0a0a0a 1cqw 2.1cqw,#fff 2.1cqw 2.5cqw,#0a0a0a 2.5cqw 3.9cqw,#fff 3.9cqw 4.7cqw,#0a0a0a 4.7cqw 5.4cqw)',
           }}
         />
-        <span className="font-bold" style={{ fontSize: '11cqw', ...fade }}>
-          {plan.price}
-        </span>
+        <a
+          href={`https://wa.me/593959204331?text=${encodeURIComponent('Hola, quiero información sobre el paquete ' + plan.name + '.')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-[2cqw] rounded-full bg-lime font-bold text-ink transition hover:brightness-95"
+          style={{ padding: '3cqw 6cqw', fontSize: '4.4cqw' }}
+        >
+          Hablemos
+          <svg viewBox="0 0 24 24" fill="none" style={{ width: '5cqw', height: '5cqw' }}>
+            <path d="M7 17 17 7M17 7H8M17 7v9" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </a>
       </div>
 
       {/* plan nav */}
