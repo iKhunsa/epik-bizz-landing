@@ -627,8 +627,8 @@ function ProcessSection() {
                   className="absolute inset-0 z-0 transition-colors duration-300"
                   style={{
                     backgroundColor: i < activeStep ? '#cefd00' : '#d8d8d8',
-                    WebkitMaskImage: "url('/assets/puzzle-piece.svg')",
-                    maskImage: "url('/assets/puzzle-piece.svg')",
+                    WebkitMaskImage: "url('/assets/step-shape.svg')",
+                    maskImage: "url('/assets/step-shape.svg')",
                     WebkitMaskRepeat: 'no-repeat',
                     maskRepeat: 'no-repeat',
                     WebkitMaskPosition: 'center',
