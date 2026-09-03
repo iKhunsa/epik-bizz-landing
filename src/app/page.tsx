@@ -608,9 +608,9 @@ function ProcessSection() {
   return (
     <section id="como-funciona" className="py-20">
       <Container>
-        <h2 className="text-center text-2xl font-bold uppercase tracking-tight text-ink md:text-4xl mb-14">
-          Cómo
-          <span className="block text-lime text-[clamp(2.5rem,10vw,128px)] leading-[0.95] mt-2">funciona</span>
+        <h2 className="text-center text-2xl font-bold uppercase tracking-tight text-ink md:text-3xl mb-14">
+          Un proceso
+          <span className="block text-lime text-[clamp(2.5rem,10vw,128px)] leading-[0.95] mt-2">simple de principio a fin</span>
         </h2>
         <ol ref={gridRef} className="relative grid list-none grid-cols-1 gap-8 p-0 sm:grid-cols-2 md:grid-cols-6 md:gap-4">
           <div aria-hidden className="absolute left-[8.33%] right-[8.33%] top-[37px] z-0 hidden h-1 bg-stone-300 md:block" />
