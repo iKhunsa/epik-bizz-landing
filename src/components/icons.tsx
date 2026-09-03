@@ -95,7 +95,7 @@ export function EpikLogo({
   className?: string;
   variant?: "ink" | "lime";
 }) {
-  const color = variant === "lime" ? "#baff19" : "#0b0b0b";
+  const color = variant === "lime" ? "#cefd00" : "#0b0b0b";
   return (
     <span
       className={`inline-flex items-baseline font-extrabold tracking-tight ${className}`}
@@ -105,8 +105,8 @@ export function EpikLogo({
       <span
         className="ml-1 rounded-full px-1.5 py-0.5 text-[0.62em] font-bold leading-none"
         style={{
-          background: variant === "lime" ? "#0b0b0b" : "#baff19",
-          color: variant === "lime" ? "#baff19" : "#0b0b0b",
+          background: variant === "lime" ? "#0b0b0b" : "#cefd00",
+          color: variant === "lime" ? "#cefd00" : "#0b0b0b",
         }}
       >
         BIZZ
