@@ -21,8 +21,8 @@ const PLANS = [
   { name: 'Origin', title: 'Empieza a existir en TikTok', accent: 'existir', desc: 'Hacemos que tu marca esté presente donde tu audiencia ya está mirando.', price: '$300', color: '#1e40af' },
   { name: 'Scale', title: 'Multiplica tu alcance.', accent: 'Multiplica', desc: 'Donde esté tu audiencia, ahí debe estar tu marca. Expandimos y optimizamos tu presencia en más canales con un solo mensaje coherente.', price: '$360', color: '#047857' },
   { name: 'Elevate', title: 'Estrategia, contenido y publicidad. Todo conectado para hacer crecer tu marca.', accent: 'Todo conectado', desc: 'Una solución completa gestionada de principio a fin, para que tu marca llegue más lejos. Construimos una presencia digital completa donde cada pieza trabaja en conjunto: estrategia, contenido y publicidad alineados para poner tu marca frente a las personas correctas, generar impacto y hacerla destacar de forma constante. Tu marca puede ser buena. Hagamos que sea Epik.', price: '$450', color: '#b45309' },
-  { name: 'Decode', title: 'Descubre cómo puede impulsar tu empresa, entendiendo Bitcoin.', accent: 'entendiendo Bitcoin', desc: 'Una asesoría enfocada en mostrarte cómo funcionan Bitcoin, identificando las oportunidades que puede generar para tu empresa y explorar sus aplicaciones, desde pagos y operaciones hasta nuevas oportunidades de negocio.', price: '$500', color: '#7c3aed' },
   { name: 'Focus', title: 'Tu marca tiene potencial. Vamos a darle dirección.', accent: 'potencial', desc: 'Resuelve dudas, define tu enfoque y fortalece tu identidad en redes sociales con una asesoría enfocada en tus objetivos actuales.', price: '$100', color: '#be123c' },
+  { name: 'Decode', title: 'Descubre cómo puede impulsar tu empresa, entendiendo Bitcoin.', accent: 'entendiendo Bitcoin', desc: 'Una asesoría enfocada en mostrarte cómo funcionan Bitcoin, identificando las oportunidades que puede generar para tu empresa y explorar sus aplicaciones, desde pagos y operaciones hasta nuevas oportunidades de negocio.', price: '$500', color: '#7c3aed' },
 ];
 
 const PROCESSES = [
@@ -535,7 +535,7 @@ function PlansSection() {
                 width: '7.29cqw',
                 height: '17.26cqw',
                 backgroundImage:
-                  'repeating-linear-gradient(90deg,#fff 0 0.28cqw,#0a0a0a 0.28cqw 0.6cqw,#fff 0.6cqw 0.72cqw,#0a0a0a 0.72cqw 1.15cqw,#fff 1.15cqw 1.5cqw,#0a0a0a 1.5cqw 1.85cqw)',
+                  'repeating-linear-gradient(180deg,#fff 0 0.28cqw,#0a0a0a 0.28cqw 0.6cqw,#fff 0.6cqw 0.72cqw,#0a0a0a 0.72cqw 1.15cqw,#fff 1.15cqw 1.5cqw,#0a0a0a 1.5cqw 1.85cqw)',
               }}
             />
 
