@@ -518,7 +518,7 @@ function PlansSection() {
               className="absolute z-10 flex items-center justify-center gap-[1cqw] rounded-full bg-lime font-bold text-ink transition hover:brightness-95"
               style={{
                 left: '90.5cqw',
-                top: '34cqw',
+                top: '15cqw',
                 width: '22cqw',
                 height: '5cqw',
                 fontSize: '2.2cqw',
@@ -537,9 +537,9 @@ function PlansSection() {
               className="absolute"
               style={{
                 left: '87.7cqw',
-                top: '9cqw',
+                top: '27cqw',
                 width: '7.29cqw',
-                height: '13cqw',
+                height: '14cqw',
                 backgroundImage:
                   'repeating-linear-gradient(180deg,#fff 0 0.28cqw,#0a0a0a 0.28cqw 0.6cqw,#fff 0.6cqw 0.72cqw,#0a0a0a 0.72cqw 1.15cqw,#fff 1.15cqw 1.5cqw,#0a0a0a 1.5cqw 1.85cqw)',
               }}
