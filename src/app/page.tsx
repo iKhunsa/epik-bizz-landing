@@ -510,20 +510,26 @@ function PlansSection() {
               ))}
             </ul>
 
-            {/* price */}
-            <span
-              className="absolute font-bold whitespace-nowrap"
+            {/* CTA in stub (reemplaza el precio) */}
+            <a
+              href={`https://wa.me/593959204331?text=${encodeURIComponent('Hola, quiero información sobre el paquete ' + plan.name + '.')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute z-10 flex items-center justify-center gap-[1cqw] rounded-full bg-lime font-bold text-ink transition hover:brightness-95"
               style={{
-                left: '93.05cqw',
-                top: '12.21cqw',
-                fontSize: '4.14cqw',
-                lineHeight: 1,
+                left: '90.5cqw',
+                top: '34cqw',
+                width: '22cqw',
+                height: '5cqw',
+                fontSize: '2.2cqw',
                 transform: 'translate(-50%,-50%) rotate(-90deg)',
-                ...fade,
               }}
             >
-              {plan.price}
-            </span>
+              Hablemos
+              <svg viewBox="0 0 24 24" fill="none" style={{ width: '2.6cqw', height: '2.6cqw' }}>
+                <path d="M7 17 17 7M17 7H8M17 7v9" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </a>
 
             {/* barcode */}
             <div
@@ -531,9 +537,9 @@ function PlansSection() {
               className="absolute"
               style={{
                 left: '87.7cqw',
-                top: '24.77cqw',
+                top: '9cqw',
                 width: '7.29cqw',
-                height: '17.26cqw',
+                height: '13cqw',
                 backgroundImage:
                   'repeating-linear-gradient(180deg,#fff 0 0.28cqw,#0a0a0a 0.28cqw 0.6cqw,#fff 0.6cqw 0.72cqw,#0a0a0a 0.72cqw 1.15cqw,#fff 1.15cqw 1.5cqw,#0a0a0a 1.5cqw 1.85cqw)',
               }}
