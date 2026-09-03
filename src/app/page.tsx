@@ -515,19 +515,19 @@ function PlansSection() {
               href={`https://wa.me/593959204331?text=${encodeURIComponent('Hola, quiero información sobre el paquete ' + plan.name + '.')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="absolute z-10 flex items-center justify-center gap-[1cqw] rounded-full bg-lime font-bold text-ink transition hover:brightness-95"
+              className="absolute z-10 flex items-center justify-center gap-[0.6cqw] rounded-full bg-lime font-bold text-ink transition hover:brightness-95"
               style={{
-                left: '90.5cqw',
-                top: '15cqw',
-                width: '22cqw',
-                height: '5cqw',
-                fontSize: '2.2cqw',
+                left: '90.6cqw',
+                top: '13cqw',
+                width: '15cqw',
+                height: '3.8cqw',
+                fontSize: '1.65cqw',
                 transform: 'translate(-50%,-50%) rotate(-90deg)',
               }}
             >
               Hablemos
-              <svg viewBox="0 0 24 24" fill="none" style={{ width: '2.6cqw', height: '2.6cqw' }}>
-                <path d="M7 17 17 7M17 7H8M17 7v9" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              <svg viewBox="0 0 24 24" fill="none" style={{ width: '1.9cqw', height: '1.9cqw' }}>
+                <path d="M7 17 17 7M17 7H8M17 7v9" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </a>
 
@@ -536,8 +536,8 @@ function PlansSection() {
               aria-hidden
               className="absolute"
               style={{
-                left: '87.7cqw',
-                top: '27cqw',
+                left: '86.95cqw',
+                top: '24cqw',
                 width: '7.29cqw',
                 height: '14cqw',
                 backgroundImage:
