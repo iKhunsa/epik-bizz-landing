@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode, RefObject } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { InstagramIcon, TikTokIcon, MailIcon, WhatsAppIcon } from '@/components/icons';
 
 const LIME = '#cefd00';
@@ -606,45 +606,70 @@ function PlansSection() {
   const isMobile = useIsMobile();
   const [activePlan, setActivePlan] = useState(0);
   const [fading, setFading] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
   const fadeTimer = useRef<number>(0);
-
-  useRafScroll(() => {
-    const wrap = scrollRef.current;
-    const card = cardRef.current;
-    if (!wrap || !card) return;
-    const rect = wrap.getBoundingClientRect();
-    const scrollable = rect.height - card.offsetHeight;
-    const progress = scrollable > 0 ? Math.min(Math.max(-rect.top / scrollable, 0), 1) : 0;
-    const idx = Math.min(Math.floor(progress * PLANS.length), PLANS.length - 1);
-    setActivePlan((prev) => {
-      if (prev === idx) return prev;
-      setFading(true);
-      window.clearTimeout(fadeTimer.current);
-      fadeTimer.current = window.setTimeout(() => setFading(false), 160);
-      return idx;
-    });
-  });
+  const sectionRef = useRef<HTMLElement>(null);
+  const activePlanRef = useRef(0);
+  const wheelLockRef = useRef(false);
+  const dockedRef = useRef(false);
 
   useEffect(() => () => window.clearTimeout(fadeTimer.current), []);
+  useEffect(() => {
+    activePlanRef.current = activePlan;
+  }, [activePlan]);
 
-  const goToPlan = (i: number) => {
-    const wrap = scrollRef.current;
-    const card = cardRef.current;
-    if (!wrap || !card) return;
-    const rect = wrap.getBoundingClientRect();
-    const scrollable = rect.height - card.offsetHeight;
-    const target = window.scrollY + rect.top + ((i + 0.5) / PLANS.length) * scrollable;
-    window.scrollTo({ top: target, behavior: 'smooth' });
-  };
+  const goToPlan = useCallback((i: number) => {
+    if (i === activePlanRef.current) return;
+    setFading(true);
+    window.clearTimeout(fadeTimer.current);
+    fadeTimer.current = window.setTimeout(() => {
+      setActivePlan(i);
+      setFading(false);
+    }, 160);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const onWheel = (e: WheelEvent) => {
+      const rect = section.getBoundingClientRect();
+      const docked = rect.top <= 0 && rect.bottom > 0;
+      if (!docked) {
+        dockedRef.current = false;
+        return;
+      }
+      if (!dockedRef.current) {
+        dockedRef.current = true;
+        e.preventDefault();
+        section.scrollIntoView({ block: 'start', behavior: 'instant' });
+        return;
+      }
+
+      const goingDown = e.deltaY > 0;
+      const atEnd = goingDown && activePlanRef.current === PLANS.length - 1;
+      const atStart = !goingDown && activePlanRef.current === 0;
+      if (atEnd || atStart) return;
+
+      e.preventDefault();
+      if (wheelLockRef.current) return;
+      wheelLockRef.current = true;
+      goToPlan(activePlanRef.current + (goingDown ? 1 : -1));
+      window.setTimeout(() => {
+        wheelLockRef.current = false;
+      }, 550);
+    };
+
+    window.addEventListener('wheel', onWheel, { passive: false });
+    return () => window.removeEventListener('wheel', onWheel);
+  }, [isMobile, goToPlan]);
 
   const plan = PLANS[activePlan];
   const fade = { opacity: fading ? 0 : 1, transition: 'opacity 160ms var(--ease-out)' } as const;
 
   return (
-    <section id="paquetes" className="mx-auto max-w-[1180px] px-4 py-16 sm:px-5 md:py-24 lg:px-8">
-      <Reveal className="mb-8 md:mb-10">
+    <section ref={sectionRef} id="paquetes" className="mx-auto max-w-[1180px] px-4 pt-20 pb-[51px] sm:px-5 lg:px-8">
+      <Reveal>
         <h2 className="font-bold uppercase tracking-tight text-ink" style={{ fontSize: 'var(--text-h2)' }}>
           Explora nuestros paquetes y elige cómo quieres hacer crecer
           <span className="mt-2 block text-lime leading-[0.95]" style={{ fontSize: 'var(--text-display)' }}>
@@ -656,9 +681,8 @@ function PlansSection() {
         </p>
       </Reveal>
 
-      <div ref={scrollRef} className="relative h-[500svh]">
-        <div ref={cardRef} className="sticky top-0 z-[5] flex min-h-[100svh] items-center">
-          {isMobile ? (
+      <div className="mt-8 flex items-center justify-center">
+        {isMobile ? (
             <PlansTicketMobile plan={plan} activePlan={activePlan} goToPlan={goToPlan} fade={fade} />
           ) : (
             <div className="relative w-full text-white" style={{ containerType: 'inline-size', aspectRatio: '1159 / 547' }}>
@@ -752,7 +776,6 @@ function PlansSection() {
               </a>
             </div>
           )}
-        </div>
       </div>
     </section>
   );
