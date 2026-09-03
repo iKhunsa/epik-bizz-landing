@@ -608,7 +608,7 @@ function ProcessSection() {
   return (
     <section id="como-funciona" className="py-20">
       <Container>
-        <h2 className="text-center text-2xl font-bold uppercase tracking-tight text-ink md:text-3xl mb-14">
+        <h2 className="text-center font-bold uppercase tracking-tight text-ink text-[clamp(1.75rem,5vw,40px)] mb-14">
           Un proceso simple
           <span className="block text-lime text-[clamp(2.5rem,10vw,128px)] leading-[0.95] mt-2">de principio a fin</span>
         </h2>
