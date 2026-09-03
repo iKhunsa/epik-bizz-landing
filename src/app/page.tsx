@@ -18,11 +18,11 @@ const HERO_LINES = [
 ];
 
 const PLANS = [
-  { name: 'Origin', title: 'Empieza a existir en TikTok.', accent: 'existir en', desc: 'Hacemos que tu marca esté presente donde tu audiencia ya está mirando. Creamos contenido profesional cada semana para que tu marca destaque y conecte con las personas correctas.', price: '$300', color: '#1e40af' },
-  { name: 'Scale', title: 'Más contenido. Más alcance. Más oportunidades para que te encuentren.', accent: 'Más oportunidades', desc: 'Tu audiencia no está en un solo lugar. Tu marca tampoco debería estarlo. Expandimos tu presencia en Google, LinkedIn y otras plataformas, con perfiles optimizados y una comunicación coherente en cada punto de contacto.', price: '$360', color: '#047857' },
+  { name: 'Origin', title: 'Empieza a existir en TikTok', accent: 'existir', desc: 'Hacemos que tu marca esté presente donde tu audiencia ya está mirando.', price: '$300', color: '#1e40af' },
+  { name: 'Scale', title: 'Multiplica tu alcance.', accent: 'Multiplica', desc: 'Donde esté tu audiencia, ahí debe estar tu marca. Expandimos y optimizamos tu presencia en más canales con un solo mensaje coherente.', price: '$360', color: '#047857' },
   { name: 'Elevate', title: 'Estrategia, contenido y publicidad. Todo conectado para hacer crecer tu marca.', accent: 'Todo conectado', desc: 'Una solución completa gestionada de principio a fin, para que tu marca llegue más lejos. Construimos una presencia digital completa donde cada pieza trabaja en conjunto: estrategia, contenido y publicidad alineados para poner tu marca frente a las personas correctas, generar impacto y hacerla destacar de forma constante. Tu marca puede ser buena. Hagamos que sea Epik.', price: '$450', color: '#b45309' },
-  { name: 'Focus', title: 'Tu marca tiene potencial. Vamos a darle dirección.', accent: 'potencial', desc: 'Resuelve dudas, define tu enfoque y fortalece tu identidad en redes sociales con una asesoría enfocada en tus objetivos actuales.', price: '$100', color: '#be123c' },
   { name: 'Decode', title: 'Descubre cómo puede impulsar tu empresa, entendiendo Bitcoin.', accent: 'entendiendo Bitcoin', desc: 'Una asesoría enfocada en mostrarte cómo funcionan Bitcoin, identificando las oportunidades que puede generar para tu empresa y explorar sus aplicaciones, desde pagos y operaciones hasta nuevas oportunidades de negocio.', price: '$500', color: '#7c3aed' },
+  { name: 'Focus', title: 'Tu marca tiene potencial. Vamos a darle dirección.', accent: 'potencial', desc: 'Resuelve dudas, define tu enfoque y fortalece tu identidad en redes sociales con una asesoría enfocada en tus objetivos actuales.', price: '$100', color: '#be123c' },
 ];
 
 const PROCESSES = [
@@ -57,16 +57,7 @@ function renderAccented(title: string, accent?: string): ReactNode {
   return (
     <>
       {title.slice(0, idx)}
-      <span
-        style={{
-          color: 'transparent',
-          WebkitTextStroke: '1.5px #cefd00',
-          // @ts-expect-error non-standard but widely supported
-          textStroke: '1.5px #cefd00',
-        }}
-      >
-        {title.slice(idx, idx + accent.length)}
-      </span>
+      <span style={{ color: '#cefd00' }}>{title.slice(idx, idx + accent.length)}</span>
       {title.slice(idx + accent.length)}
     </>
   );
@@ -450,76 +441,103 @@ function PlansSection() {
             <PlansTicketMobile plan={plan} activePlan={activePlan} goToPlan={goToPlan} fade={fade} />
           ) : (
           <div
-            className="relative flex w-full gap-0 text-white"
+            className="relative w-full text-white"
             style={{ containerType: 'inline-size', aspectRatio: '1159 / 547' }}
           >
-            {/* left panel */}
+            {/* left panel bg */}
             <div
-              className="relative flex flex-1 flex-col overflow-hidden bg-[#0a0a0a]"
-              style={{ borderRadius: '3.2cqw', padding: '4.4cqw 3.45cqw 3.45cqw', gap: '1.4cqw' }}
+              className="absolute inset-0 bg-[#0a0a0a]"
+              style={{ right: '18.79cqw', borderRadius: '3.2cqw' }}
+            />
+            {/* right stub bg */}
+            <div
+              className="absolute inset-0 bg-[#0a0a0a]"
+              style={{ left: '81.21cqw', borderRadius: '3.2cqw' }}
+            />
+
+            {/* title + desc */}
+            <div
+              className="absolute flex flex-col"
+              style={{ left: '4.66cqw', top: '3.19cqw', width: '60.14cqw', gap: '0.6cqw' }}
             >
-              <div className="flex flex-col" style={{ flex: '0 0 auto', width: '52cqw', gap: '1cqw' }}>
-                <h3
-                  className="m-0 font-bold uppercase leading-[1.24] tracking-[-0.01em]"
-                  style={{ fontSize: '2.4cqw', ...fade }}
-                >
-                  {renderAccented(plan.title, plan.accent)}
-                </h3>
-                <p className="m-0 leading-[1.5] text-white/85" style={{ fontSize: '1.22cqw', ...fade }}>
-                  {plan.desc}
-                </p>
-              </div>
-              <div
-                className="overflow-hidden transition-colors duration-200"
-                style={{ flex: '1 1 auto', minHeight: 0, width: '52cqw', borderRadius: '1.9cqw', background: plan.color }}
-              />
-              <ul
-                className="absolute right-[4cqw] m-0 list-none p-0 text-right leading-[1.68]"
-                style={{ fontSize: '2.45cqw', top: '72%', transform: 'translateY(-50%)' }}
+              <h3
+                className="m-0 font-bold uppercase"
+                style={{ fontSize: '3.45cqw', lineHeight: 1, ...fade }}
               >
-                {PLANS.map((p, i) => (
-                  <li key={p.name} style={{ color: i === activePlan ? '#cefd00' : 'rgba(255,255,255,0.45)' }}>
-                    <button
-                      type="button"
-                      onClick={() => goToPlan(i)}
-                      className="cursor-pointer border-none bg-transparent p-0 font-[inherit] text-[inherit] transition-colors"
-                    >
-                      {p.name}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+                {renderAccented(plan.title, plan.accent)}
+              </h3>
+              <p className="m-0 text-white" style={{ fontSize: '1.73cqw', lineHeight: 1.15, ...fade }}>
+                {plan.desc}
+              </p>
             </div>
 
-            {/* right stub */}
+            {/* photo placeholder */}
             <div
-              className="relative shrink-0 overflow-hidden bg-[#0a0a0a]"
-              style={{ width: '19.24cqw', borderRadius: '3.2cqw' }}
+              className="absolute transition-colors duration-200"
+              style={{
+                top: '13.45cqw',
+                left: '3.19cqw',
+                right: '35.19cqw',
+                bottom: '3.36cqw',
+                borderRadius: '1.9cqw',
+                background: plan.color,
+              }}
+            />
+
+            {/* plan list */}
+            <ul
+              className="absolute m-0 list-none p-0"
+              style={{ left: '67.39cqw', top: '23.21cqw', width: '9.33cqw' }}
             >
-              <span
-                className="absolute left-[52%] font-bold tracking-[-0.01em]"
-                style={{
-                  top: '6.6cqw',
-                  fontSize: '3.9cqw',
-                  writingMode: 'vertical-rl',
-                  transform: 'translateX(-50%) rotate(180deg)',
-                  ...fade,
-                }}
-              >
-                {plan.price}
-              </span>
-              <div
-                aria-hidden
-                className="absolute left-[52%] -translate-x-1/2"
-                style={{
-                  top: '24.1cqw',
-                  width: '7.2cqw',
-                  height: '16.4cqw',
-                  backgroundImage:
-                    'repeating-linear-gradient(180deg,#fff 0 0.26cqw,#0a0a0a 0.26cqw 0.55cqw,#fff 0.55cqw 0.64cqw,#0a0a0a 0.64cqw 1.0cqw,#fff 1.0cqw 1.2cqw,#0a0a0a 1.2cqw 1.38cqw)',
-                }}
-              />
-            </div>
+              {PLANS.map((p, i) => (
+                <li
+                  key={p.name}
+                  style={{
+                    height: '4.28cqw',
+                    fontSize: '2.76cqw',
+                    lineHeight: '3.59cqw',
+                    color: i === activePlan ? '#cefd00' : 'rgba(255,255,255,0.6)',
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => goToPlan(i)}
+                    className="w-full cursor-pointer border-none bg-transparent p-0 text-center font-[inherit] text-[inherit] transition-colors"
+                  >
+                    {p.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            {/* price */}
+            <span
+              className="absolute font-bold whitespace-nowrap"
+              style={{
+                left: '93.05cqw',
+                top: '12.21cqw',
+                fontSize: '4.14cqw',
+                lineHeight: 1,
+                transform: 'translate(-50%,-50%) rotate(-90deg)',
+                ...fade,
+              }}
+            >
+              {plan.price}
+            </span>
+
+            {/* barcode */}
+            <div
+              aria-hidden
+              className="absolute"
+              style={{
+                left: '87.7cqw',
+                top: '24.77cqw',
+                width: '7.29cqw',
+                height: '17.26cqw',
+                backgroundImage:
+                  'repeating-linear-gradient(90deg,#fff 0 0.28cqw,#0a0a0a 0.28cqw 0.6cqw,#fff 0.6cqw 0.72cqw,#0a0a0a 0.72cqw 1.15cqw,#fff 1.15cqw 1.5cqw,#0a0a0a 1.5cqw 1.85cqw)',
+              }}
+            />
 
             {/* CTA sticker */}
             <a
@@ -528,7 +546,7 @@ function PlansSection() {
               rel="noopener noreferrer"
               aria-label="Hablemos por WhatsApp"
               className="absolute z-10 transition-transform hover:rotate-[-8deg] hover:scale-105"
-              style={{ left: '66cqw', top: '0.5cqw', width: '30cqw', height: '19cqw' }}
+              style={{ left: '69.46cqw', top: '3.88cqw', width: '17.34cqw', aspectRatio: '279 / 294' }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
